@@ -1,0 +1,330 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<html>
+<style>
+    .tablecss {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .tablecss td,
+    .tablecss th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .tablecss tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .tablecss tr:hover {
+        background-color: #ddd;
+    }
+
+    .tablecss th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: lavender;
+        color: black;
+        font-weight: bold;
+    }
+</style>
+
+<body onload="loadData()">
+    <center>
+        <table id="viewprofile" class="tablecss" style="width: 1000px;"></table>
+
+    </center>
+
+    <div class="modal fade" id="myModal" role="dialog" width="100%">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content" style="background-color:rgb(236, 221, 221)">
+                <div class="modal-header" style="background-color:rgb(172, 76, 172)">
+                    <button type="button" style="background-color:white" class="close"
+                        data-dismiss="modal">&times;</button>
+                    <center>
+                        <font style="color:white">
+                            <h4>Add Customer</h4>
+                        </font>
+                    </center>
+                </div>
+                <div class="modal-body">
+                    <from onsubmit="update(event)">
+                    <div class="row">
+                        <div class="col-sm-12">
+                            <div class="row">
+
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-1" style="text-align: right"></div>
+                                <div class="col-sm-3">
+                                    <input type="hidden" class="form-control" name="name" id="id"
+                                        placeholder="enter id">
+                                </div>
+                                <div class="col-sm-4"></div>
+                            </div><br>
+                            <div class="row">
+                                <div class="col-sm-3">
+
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Agent Name:</label><br>
+                                    <select class=form-control id="agentname" required>
+                                        <option value="">--select--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Policy Name:</label><br>
+                                    <select class=form-control id="policyname" required>
+                                        <option value="">--select--</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm-3">
+                                </div>
+                            </div><br>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-3 ">
+                                    <label>Customer Name:</label><br>
+                                    <input type="text" class="form-control" name="name" id="customername"
+                                        placeholder="enter a name" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Age :</label><br>
+                                    <input type="number" class="form-control" name="age" id="dob"
+                                        placeholder="Enter ur age" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Phoneno:</label><br>
+                                    <input type="text" class="form-control" name="phn no." id="phno"
+                                        placeholder="Enter ur phoneno" maxlength="10" pattern="[6-9]{1}[0-9]{9}" required >
+                                </div>
+                            </div><br>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Email Id:</label><br>
+                                    <input type="email" class="form-control" name="email" id="email"
+                                        placeholder="Enter ur Emailid" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Policy Amount:</label><br>
+                                    <input type="number" class="form-control" name="amount" id="policyamount"
+                                        placeholder="Enter ur Policy Amount" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Policy Term:</label><br>
+                                    <input type="number" class="form-control" name="term" id="policyterm"
+                                        placeholder="Enter ur Policy Term" required>
+                                </div>
+                            </div><br>
+                            <div class="row">
+                                <div class="col-sm-2">
+                                </div>
+                                <div class="col-sm-3">
+                                    <label>Policy Period:</label><br>
+                                    <input type="number" class="form-control" name="period" id="policyperiod"
+                                        placeholder="Enter ur Policy Period" required></div>
+                                <div class="col-sm-3" style="text-align:left">
+                                    <label>Joining Date:</label><br>
+                                    <input type="date" class="form-control" name="date" id="joiningdate" placeholder="" required>
+                                </div>
+                                <div class="col-sm-3">
+                                    <label> Address:</label><br>
+                                    <textarea cols="20" id="address" placeholder="Enter ur Address" required></textarea>
+                                </div>
+                            </div><br>
+                            <div class="row">
+                                <div class="col-sm-4"></div>
+                                <div class="col-sm-2"><button type="submit" id="btnupdate" 
+                                        class="btn btn-success" onclick="update(event)">UPDATE</button></div>&nbsp;
+                                <div class="col-sm-2"><button type="reset" id="cancel" 
+                                        class="btn btn-success">Reset</button></div>
+                                <div class="col-sm-4"></div>
+                            </div><br>
+                        </div>
+                    </div></from>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div>
+</body>
+<script>
+    let addcustomers = [];
+
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    resolve(this.responseText);
+                }
+
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+
+    function loadData() {
+        const getAgentPromise = performAjax("GET", "http://localhost:5000/User/viewcustomer");
+        getAgentPromise
+            .then((customerList) => {
+                loadacustomer(customerList);
+                loadData1();
+                loadData3();
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function loadData1() {
+        const getUnivarsityPromise = performAjax("GET", "http://localhost:5000/admin/viewagents");
+        getUnivarsityPromise
+            .then((customerList) => {
+                getAgentList(customerList);
+
+
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function loadData3() {
+        const getpolicyPromise = performAjax("GET", "http://localhost:5000/admin/viewpolicy");
+        getpolicyPromise
+            .then((customerList) => {
+                getList(customerList);
+
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function getAgentList(agentData) {
+        let jj = document.getElementById("agentname");
+
+        const ct = JSON.parse(agentData);
+        for (let i = 0; i < ct.length; i++) {
+            const qaopt = document.createElement("OPTION");
+            qaopt.innerHTML = ct[i].agentname;
+            qaopt.value = ct[i].agentname;
+            jj.options.add(qaopt);
+
+        }
+    }
+
+    function getList(agentData) {
+        let jjj = document.getElementById("policyname");
+        const ct = JSON.parse(agentData);
+        for (let j = 0; j < ct.length; j++) {
+            const qaopt1 = document.createElement("OPTION");
+            qaopt1.innerHTML = ct[j].policyname;
+            qaopt1.value = ct[j].policyname;
+            jjj.options.add(qaopt1);
+        }
+
+    }
+
+    function loadacustomer(records) {
+        addcustomers = JSON.parse(records);
+        const tableHeader = `<tr><th style="text-align:center">Sno</th><th style="text-align:center">Agentname</th><th style="text-align:center">Policyname</th><th style="text-align:center">Customername</th><th style="text-align:center">Dob</th><th style="text-align:center">Email</th><th style="text-align:center">Policyamount</th><th style="text-align:center">Policyterm</th><th style="text-align:center">Policyperiod</th><th style="text-align:center">Joiningdate</th><th style="text-align:center">Address</th><th style="text-align:center">Actions</th></tr><br>`;
+        let tableRows = addcustomers.map((customer, index) => {
+            let editButton = `<a class="fa fa-edit" id="${customer._id}"   style="color:blue; font-size:22px;" onclick="editcustomer(event)" data-toggle="modal" data-target="#myModal"></a>`;
+            return `<tr><td>${index + 1}</td><td>${customer.agentname}</td><td>${customer.policyname}</td><td>${customer.customername}</td><td>${customer.dob}</td><td>${customer.email}</td><td>${customer.policyamount}</td><td>${customer.policyterm}</td><td>${customer.policyperiod}</td><td>${customer.joiningdate}</td><td>${customer.address}</td><td>&nbsp;${editButton}&nbsp;</td></tr>`;
+
+        });
+
+        document.getElementById("viewprofile").innerHTML = `<center><table width="90%" border="2"> ${tableHeader}${tableRows.join('')}</table></center>`;
+    }
+
+    function editcustomer(event) {
+        event.preventDefault();
+        let editRecord;
+        addcustomers.map(customer => {
+            if (customer._id === event.target.id) {
+                editRecord = customer;
+            }
+        });
+        if (editRecord !== undefined) {
+            document.getElementById("id").value = editRecord._id;
+            document.getElementById("agentname").value = editRecord.agentname;
+            document.getElementById("policyname").value = editRecord.policyname;
+            document.getElementById("customername").value = editRecord.customername;
+            document.getElementById("dob").value = editRecord.dob;
+            document.getElementById("phno").value = editRecord.phno;
+            document.getElementById("email").value = editRecord.email;
+            document.getElementById("policyamount").value = editRecord.policyamount;
+            document.getElementById("policyterm").value = editRecord.policyterm;
+            document.getElementById("policyperiod").value = editRecord.policyperiod;
+            document.getElementById("joiningdate").value = editRecord.joiningdate;
+            document.getElementById("address").value = editRecord.address;
+        }
+        else {
+            alert("Agents not Found");
+        }
+    }
+
+    function update() {
+        event.preventDefault();
+        const id = document.getElementById("id").value;
+        const agentname = document.getElementById("agentname").value;
+        const policyname = document.getElementById("policyname").value;
+        const customername = document.getElementById("customername").value;
+        const dob = document.getElementById("dob").value;
+        const phno = document.getElementById("phno").value;
+        const email = document.getElementById("email").value;
+        const policyamount = document.getElementById("policyamount").value;
+        const policyterm = document.getElementById("policyterm").value;
+        const policyperiod = document.getElementById("policyperiod").value;
+        const joiningdate = document.getElementById("joiningdate").value;
+        const address = document.getElementById("address").value;
+        const updateAgentPromise = performAjax(
+            "PUT", `http://localhost:5000/user/customerupdate/${id}`,
+            JSON.stringify({ agentname, policyname, customername, dob, phno, email, policyamount, policyterm, policyperiod, joiningdate, address })
+        );
+        alert("Updated Success");
+        updateAgentPromise
+            .then(updatedAgentList => {
+                loadacustomer(updatedAgentList);
+                cancel();
+            })
+            .catch(err => {
+               // alert(err.message);
+               this.loadData()
+            })
+    }
+
+    function cancel() {
+        event.preventDefault();
+        document.getElementById("agentname").value = "";
+        document.getElementById("policyname").value = "";
+        document.getElementById("customername").value = "";
+        document.getElementById("dob").value = "";
+        document.getElementById("phno").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("policyamount").value = "";
+        document.getElementById("policyterm").value = "";
+        document.getElementById("policyperiod").value = "";
+        document.getElementById("joiningdate").value = "";
+        document.getElementById("address").value = "";
+    }
+</script>

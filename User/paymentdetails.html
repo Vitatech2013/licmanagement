@@ -1,0 +1,89 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<html>
+<style>
+    .tablecss {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .tablecss td,
+    .tablecss th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .tablecss tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .tablecss tr:hover {
+        background-color: #ddd;
+    }
+
+    .tablecss th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: lavender;
+        color: black;
+        font-weight: bold;
+    }
+</style>
+
+<body onload="loadData()">
+    <center>
+        <table id="payments" class="tablecss" style="width: 1000px;"></table>
+    </center>
+</body>
+
+</html>
+<script>
+
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    resolve(this.responseText);
+                }
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+
+    function loadData() {
+        const getPaymentPromise = performAjax("GET", "http://localhost:5000/User/viewpayments");
+        getPaymentPromise
+            .then((cusList) => {
+                loadpayments(cusList);
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function loadpayments(records) {
+        addpayments = JSON.parse(records);
+        const tableHeader = `<tr><th style="text-align:center">Sno</th><th style="text-align:center">customername</th><th style="text-align:center">Agentname</th><th style="text-align:center">policyname</th><th style="text-align:center">policyamount</th><th style="text-align:center">NewAmount</th></tr><br>`;
+        let tableRows = addpayments.map((payment, index) => {
+            return `<tr><td>${index + 1}</td><td>${payment.customername}</td><td>${payment.agentname}</td><td>${payment.policyname}</td><td>${payment.policyamount}</td><td>${payment.newamount}</td></tr>`;
+
+        });
+
+        document.getElementById("payments").innerHTML = `<center><table width="90%"  border="2"> ${tableHeader}${tableRows.join('')}</table></center>`;
+    }
+
+</script>

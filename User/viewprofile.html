@@ -1,0 +1,150 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    .form-control {
+        border-radius: 15px;
+    }
+</style>
+
+<body onload="Profile()" style="font-family: verdena;"><br>
+    <form onsubmit="Update()">
+    <div class="row">
+        <h3 style="text-align: center"><b>Customer Profile</b></h3>
+
+    </div><br>
+    <div class="row">
+        <div class="col-sm-2"></div>
+        <div class="col-sm-2"></div>
+        <div class="col-sm-6"><input type="hidden" class="form-control" name="id" id="id"></div>
+        <div class="col-sm-2"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Name:</label></div>
+        <div class="col-sm-3"><input type="text" class="form-control" name="name" id="agentname1"
+                placeholder="enter agent name" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Mobile No.:</label></div>
+        <div class="col-sm-3"><input type="text" class="form-control" name="mobile no." id="phno1" maxlength="10" pattern="[6-9]{1}[0-9]{9}" required>
+        </div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Email Id:</label></div>
+        <div class="col-sm-3"><input type="email" class="form-control" name="email" id="email1"
+                placeholder="enter valid email"  pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>DOB:</label></div>
+        <div class="col-sm-3"><input type="date" class="form-control" name="date" id="dob1" placeholder="" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Gender:</label></div>
+        <div class="col-sm-3"><input type="radio" name="gender" id="female" value="Female" required>Female
+            <input type="radio" name="gender" id="male" value="Male" required>Male</div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Aadhar:</label></div>
+        <div class="col-sm-3"><input type="number" class="form-control" name="aadhar" id="adharno" placeholder="enter ur adharno" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Address:</label></div>
+        <div class="col-sm-3"><textarea style="border-radius: 15px;" id="address1" placeholder="enter ur address" cols="33" required></textarea></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-6"></div>
+        <div class="col-sm-1"><button type="submit" 
+                class="btn btn-success">Update</button></div>
+        <div class="col-sm-1"></div>
+        <div class="col-sm-4"></div>
+    </div></form>
+</body>
+<script>
+    const agentname = sessionStorage.getItem("agentname");
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    resolve(this.responseText);
+                }
+
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+
+    function Profile() {
+        document.getElementById("agentname1").value = agentname;
+        const getUsersPromise = performAjax("GET", `http://localhost:5000/User/viewprofile?agentname=${agentname}`);
+        getUsersPromise
+            .then((data) => {
+                const profile = JSON.parse(data);
+                profile.map(rec => {
+                    document.getElementById("id").value = rec._id;
+                    document.getElementById("agentname1").value = rec.agentname;
+                    document.getElementById("phno1").value = rec.phno;
+                    document.getElementById("email1").value = rec.email;
+                    document.getElementById("dob1").value = rec.dob;
+                    rec.gender === 'Male' ? document.getElementById("male").checked = true : document.getElementById("female").checked = true;
+                    document.getElementById("adharno").value = rec.adharno;
+                    document.getElementById("address1").value = rec.address;
+                });
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function Update() {
+        event.preventDefault();
+        const id = document.getElementById("id").value;
+        const agentname = document.getElementById("agentname1").value;
+        const phno = document.getElementById("phno1").value;
+        const email = document.getElementById("email1").value;
+        const dob = document.getElementById("dob1").value;
+        const gender = document.getElementById("male").checked;
+        const adharno = document.getElementById("adharno").value;
+        const address = document.getElementById("address1").value;
+
+        const getUpdatePromise = performAjax(
+            "PUT",
+            `http://localhost:5000/User/${id}`,
+            JSON.stringify({ agentname, phno, email, dob, gender, adharno, address })
+        );
+        getUpdatePromise
+            .then((updatePromise) => {
+                alert('Details Updated');
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+</script>

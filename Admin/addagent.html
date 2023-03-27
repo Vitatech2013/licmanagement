@@ -1,0 +1,148 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    .form-control {
+        border-radius: 15px;
+    }
+</style>
+
+<body style="font-family: verdena;"><br>
+    <form onsubmit="addagent()">
+        <div class="row">
+
+            <h3 style="text-align: center"><b>Add Agents</b></h3>
+
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2">
+                <label for=""></label>
+            </div>
+            <div class="col-sm-3">
+                <input type="hidden" name="id" id="id" class="form-control" placeholder="enter name" required>
+            </div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Name:</label></div>
+            <div class="col-sm-3"><input type="text" class="form-control" name="name" id="agentname"
+                    placeholder="enter agent name" required></div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Mobile No.:</label></div>
+            <div class="col-sm-3"><input type="text" placeholder="enter ur mobileno" maxlength="10"
+                    pattern="[6-9]{1}[0-9]{9}" required class="form-control" name="mobile no." id="phno">
+            </div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Email Id:</label></div>
+            <div class="col-sm-3"><input type="email" class="form-control" name="email" id="email"
+                    placeholder="enter valid email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,}$" required></div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>DOB:</label></div>
+            <div class="col-sm-3"><input type="date" class="form-control" name="date" id="dob" placeholder="" required>
+            </div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Gender:</label></div>
+            <div class="col-sm-3"><input type="radio" name="gender" id="female" value="Female" required>Female
+                <input type="radio" name="gender" id="male" value="Male" required>Male</div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Aadhar:</label></div>
+            <div class="col-sm-3"><input type="number" class="form-control" name="aadhar" id="adharno"
+                    placeholder="enter ur adharno" required></div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-4"></div>
+            <div class="col-sm-2"><label>Address:</label></div>
+            <div class="col-sm-3"><textarea id="address" placeholder="enter ur address" required
+                    style=" border-radius: 15px;" cols="33"></textarea></div>
+            <div class="col-sm-3"></div>
+        </div><br>
+        <div class="row">
+            <div class="col-sm-5"></div>
+            <div class="col-sm-1"><input type="submit"   class="btn btn-success" value="Add" />
+            </div>&nbsp;
+            <div class="col-sm-1"><button type="reset" id="cancel" class="btn btn-success">Reset</button></div>
+            <div class="col-sm-5"></div>
+        </div><br></form>
+</body>
+<script>
+    let addagents = [];
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    resolve(this.responseText);
+                }
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+
+    function addagent() {
+        event.preventDefault();
+        const id = document.getElementById("id").value;
+        const agentname = document.getElementById("agentname").value;
+        const phno = document.getElementById("phno").value;
+        const email = document.getElementById("email").value;
+        const dob = document.getElementById("dob").value;
+        const gender = document.getElementById("male").checked ? "Male" : "Female";
+        const adharno = document.getElementById("adharno").value;
+        const address = document.getElementById("address").value;
+       
+            const addAgentPromise = performAjax(
+                "POST", "http://localhost:5000/admin/addagents",
+                JSON.stringify({ agentname, phno, email, dob, gender, adharno, address })
+            );
+            addAgentPromise
+                .then(newAgentList => {
+                    alert("succefully added");
+                    cancel();
+                })
+                .catch(err => {
+                    alert(err.message);
+                });
+        }
+    
+
+    function cancel() {
+        event.preventDefault();
+        document.getElementById("agentname").value = "";
+        document.getElementById("phno").value = "";
+        document.getElementById("email").value = "";
+        document.getElementById("dob").value = "";
+        document.getElementById("male").checked = "";
+        document.getElementById("adharno").value = "";
+        document.getElementById("address").value = "";
+    }
+
+</script>

@@ -1,0 +1,176 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    .form-control {
+        border-radius: 15px;
+    }
+</style>
+
+<body onload="loadData()" style="font-family: verdena;"><br>
+    <form onsubmit="payment()">
+    <div class="row">
+
+        <h3 style="text-align: center"><b>Payment</b></h3>
+
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label></label></div>
+        <div class="col-sm-3"><input type="hidden" class="form-control" name="id" id="id" placeholder=""></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"> <label>Customer Name:</label></div>
+        <div class="col-sm-3">
+            <select class="form-control" onchange="Getcusnames()" id="customername" required>
+                <option value="">--select--</option>
+            </select>
+        </div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Agentname:</label></div>
+        <div class="col-sm-3"><input type="text" class="form-control" disabled name="type" id="agentname"
+                placeholder="" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Policy Name:</label></div>
+        <div class="col-sm-3"><input type="text" class="form-control" disabled name="name" id="policyname"
+                placeholder="" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Policy Amount:</label></div>
+        <div class="col-sm-3"><input type="number" class="form-control" disabled name="name" id="policyamount"
+                placeholder="" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>New Amount:</label></div>
+        <div class="col-sm-3"><input type="text" class="form-control" name="duedate" id="newamount"
+                placeholder="Enter new amount" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Joining Date:</label></div>
+        <div class="col-sm-3"><input type="date" class="form-control" disabled name="date" id="joiningdate"
+                placeholder="" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+
+    <div class="row">
+        <div class="col-sm-6"></div>
+        <div class="col-sm-1"><button type="submit"   data-dismiss="modal"
+                class="btn btn-success">Pay</button>
+        </div>
+        <div class="col-sm-1"><button type="reset" class="btn btn-success" id="cancel"
+               >Reset</button></div>
+        <div class="col-sm-4"></div>
+    </div><br>
+    </form>
+</body>
+    <script>
+        let addpayments = [];
+
+        function performAjax(httpMethod, url, params) {
+            const myPromise = new Promise((resolve, reject) => {
+                var xhttp = new XMLHttpRequest();
+                xhttp.onreadystatechange = function () {
+                    if (this.readyState == 4 && this.status == 200) {
+
+                        resolve(this.responseText);
+                    }
+
+                    if (this.status == 500) {
+                        reject({ error: true, message: "ServerError" });
+                    }
+                    if (this.status == 404) {
+                        reject({ error: true, message: "Resource not found" });
+                    }
+                };
+                xhttp.open(httpMethod, url, true);
+                xhttp.setRequestHeader("Content-Type", "application/json");
+                params ? xhttp.send(params) : xhttp.send();
+            });
+            return myPromise;
+        }
+        function loadData() {
+            const getPayPromise = performAjax("GET", "http://localhost:5000/User/viewcustomer");
+            getPayPromise
+                .then((cusList) => {
+                    getcustomerList(cusList);
+
+                })
+                .catch(err => {
+                    alert(err.message);
+                })
+        }
+
+        function getcustomerList(customerData) {
+            let jj = document.getElementById("customername");
+            const ct = JSON.parse(customerData);
+            for (let i = 0; i < ct.length; i++) {
+                const qaopt = document.createElement("OPTION");
+                qaopt.innerHTML = ct[i].customername;
+                qaopt.value = ct[i].customername;
+                jj.options.add(qaopt);
+            }
+        }
+
+        function payment() {
+            event.preventDefault();
+            const id = document.getElementById("id").value;
+            const customername = document.getElementById("customername").value;
+            const agentname = document.getElementById("agentname").value;
+            const policyname = document.getElementById("policyname").value;
+            const policyamount = document.getElementById("policyamount").value;
+            const newamount = document.getElementById("newamount").value;
+            const joiningdate = document.getElementById("joiningdate").value;
+           
+                const addPaymentPromise = performAjax(
+                    "POST", "http://localhost:5000/User/payments",
+                    JSON.stringify({ customername, agentname, policyname, policyamount, newamount, joiningdate })
+                );
+
+                addPaymentPromise
+                    .then(newPaymentList => {
+                        alert("Added Success");
+                    })
+                    .catch(err => {
+                        alert(err.message);
+                    })
+            }
+        
+
+        function Getcusnames() {
+            const name = document.getElementById("customername").value;
+            console.log(customername);
+            const getUserPromise = performAjax(
+                "GET", `http://localhost:5000/User/getcusnames?customername=${name}`
+            );
+            getUserPromise
+                .then((message) => {
+                    let addpayments = JSON.parse(message);
+                    addpayments.map(payment => {
+                        document.getElementById("agentname").value = payment.agentname;
+                        document.getElementById("policyname").value = payment.policyname;
+                        document.getElementById("policyamount").value = payment.policyamount;
+                        document.getElementById("joiningdate").value = payment.joiningdate;
+                    });
+                })
+                .catch(err => {
+                    alert(err.message);
+                })
+        }
+
+    </script>

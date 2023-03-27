@@ -1,0 +1,215 @@
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+<html>
+<style>
+    .tablecss {
+        font-family: "Trebuchet MS", Arial, Helvetica, sans-serif;
+        border-collapse: collapse;
+        width: 100%;
+    }
+
+    .tablecss td,
+    .tablecss th {
+        border: 1px solid #ddd;
+        padding: 8px;
+    }
+
+    .tablecss tr:nth-child(odd) {
+        background-color: #f2f2f2;
+    }
+
+    .tablecss tr:hover {
+        background-color: #ddd;
+    }
+
+    .tablecss th {
+        padding-top: 12px;
+        padding-bottom: 12px;
+        text-align: center;
+        background-color: lavender;
+        color: black;
+        font-weight: bold;
+    }
+</style>
+
+<body onload="loadData()">
+    <center>
+        <table id="viewpolices" class="tablecss" style="width:95%;"></table>
+    </center>
+
+    <div class="modal fade" id="myModal" role="dialog">
+        <div class="modal-dialog modal-md">
+            <div class="modal-content" style="background-color:rgb(236, 221, 221)">
+                <div class="modal-header" style="background-color:rgb(172, 76, 172)">
+                    <button type="button" style="background-color:white" class="close"
+                        data-dismiss="modal">&times;</button>
+                    <center>
+                        <font style="color:white">
+                            <h4>Add Policy</h4>
+                        </font>
+                    </center>
+                </div>
+                <div class="modal-body">
+                    <from onsubmit="UserUpdate(event)">
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2"> </div>
+                        <div class="col-sm-6"><input type="hidden" class="form-control" name="id" id="id"></div>
+                        <div class="col-sm-2"></div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2"><label> Name:</label></div>
+                        <div class="col-sm-6"><input type="text" id="policyname" class="form-control" name="Aname"
+                                placeholder="enter  policyname" required></div>
+                        <div class="col-sm-2"></div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2"><label>Min Age:</label></div>
+                        <div class="col-sm-6"><input type="number" id="minage" class="form-control" name="age"
+                                placeholder="" required></div>
+                        <div class="col-sm-2"></div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2"><label>Min Amount:</label></div>
+                        <div class="col-sm-6"><input type="number" id="minamount" class="form-control" name="Amount"
+                                placeholder="" required></div>
+                        <div class="col-sm-2"></div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-2"></div>
+                        <div class="col-sm-2"><label>Description:</label></div>
+                        <div class="col-sm-6"><textarea id="description" cols="30"
+                                placeholder="Enter Description " required></textarea></div>
+                        <div class="col-sm-2"></div>
+                    </div><br>
+                    <div class="row">
+                        <div class="col-sm-3"></div>
+                        <div class="col-sm-2"><button type="submit" id="btnupdate1"
+                                class="btn btn-success" onclick="UserUpdate(event)">UPDATE</button></div>&nbsp;
+                        <div class="col-sm-2"><button type="reset" id="cancel" 
+                                class="btn btn-success">Reset</button></div>
+                        <div class="col-sm-3"></div>
+                    </div><br></from>
+                </div>
+            </div>
+        </div>
+    </div>
+    </div><br><br>
+</body>
+
+</html>
+<script>
+    let addpolices = [];
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+                    resolve(this.responseText);
+                }
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+    function loadData() {
+        const getPolicesPromise = performAjax("GET", "http://localhost:5000/admin/viewpolicy");
+        getPolicesPromise
+            .then((policyList) => {
+                loadpolices(policyList);
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function loadpolices(records) {
+        addpolices = JSON.parse(records);
+        const tableHeader = `<tr><th style="text-align:center">Sno</th><th style="text-align:center">policyname</th><th style="text-align:center">minage</th><th style="text-align:center">minamount</th><th style="text-align:center">description</th><th style="text-align:center">Actions</th></tr>`;
+        let tableRows = addpolices.map((policy, index) => {
+            let editButton = `<a class="fa fa-edit" id="${policy._id}"   style="color:blue; font-size:22px;" onclick="editpolicy(event)" data-toggle="modal" data-target="#myModal"></a>`;
+            let deleteButton = `<a id="${policy._id}" class="fa fa-trash" style="color:blue; font-size:22px;" onclick="deletepolicy(event)"></a>`;
+            return `<tr><td>${index + 1}</td><td>${policy.policyname}</td><td>${policy.minage}</td><td>${policy.minamount}</td><td>${policy.description}</td><td>&nbsp;${editButton}&nbsp;&nbsp;${deleteButton}&nbsp;</td></tr>`;
+
+        });
+
+        document.getElementById("viewpolices").innerHTML = `<table width="95%" border="2"> ${tableHeader}${tableRows.join('')}</table>`;
+    }
+
+    function editpolicy(event) {
+        event.preventDefault();
+        let editRecord;
+        addpolices.map(policy => {
+            if (policy._id === event.target.id) {
+                editRecord = policy;
+            }
+        });
+        if (editRecord !== undefined) {
+            document.getElementById("id").value = editRecord._id;
+            document.getElementById("policyname").value = editRecord.policyname;
+            document.getElementById("minage").value = editRecord.minage;
+            document.getElementById("minamount").value = editRecord.minamount;
+            document.getElementById("description").value = editRecord.description;
+        }
+
+        else {
+            alert("Agents not Found");
+        }
+    }
+
+    function deletepolicy(event) {
+        const deletePromise = performAjax("DELETE", `http://localhost:5000/admin/${event.target.id}`);
+        deletePromise
+            .then((remainingPolicy) => {
+                loadpolices(remainingPolicy);
+            })
+            .catch(err => {
+                alert(err.message);
+                this.loadData()
+            })
+    }
+
+    function UserUpdate() {
+        event.preventDefault();
+        const id = document.getElementById("id").value;
+        const policyname = document.getElementById("policyname").value;
+        const minage = document.getElementById("minage").value;
+        const minamount = document.getElementById("minamount").value;
+        const description = document.getElementById("description").value;
+        const getOrgPromise = performAjax(
+            "PUT",
+            `http://localhost:5000/admin/updatepolicy/${id}`,
+            JSON.stringify({ policyname, minage, minamount, description })
+        );
+        getOrgPromise
+            .then((OrgPromise) => {
+                loadData();
+                alert('Update Successfully Completed');
+                cancel();
+            })
+            .catch(err => {
+                alert(err.message);
+            })
+    }
+
+    function cancel() {
+        document.getElementById("policyname").value = "";
+        document.getElementById("minage").value = "";
+        document.getElementById("minamount").value = "";
+        document.getElementById("description").value = "";
+    }
+
+</script>

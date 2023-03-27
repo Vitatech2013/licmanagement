@@ -1,0 +1,116 @@
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+<script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+<style>
+    .form-control {
+        border-radius: 15px;
+    }
+</style>
+
+<body style="font-family: verdena;"><br>
+    <form onsubmit="addpolicy(event)">
+    <div class="row">
+        <h3 style="text-align: center"><b>Add Policys</b></h3>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"> </div>
+        <div class="col-sm-3"><input type="hidden" class="form-control" name="id" id="id"></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label> Name:</label></div>
+        <div class="col-sm-3"><input type="text" id="policyname" class="form-control" name="Aname"
+                placeholder="enter  policyname" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Min Age:</label></div>
+        <div class="col-sm-3"><input type="number" placeholder="enter min age" id="minage" class="form-control"
+                name="age" placeholder="enter minage" required></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Min Amount:</label></div>
+        <div class="col-sm-3"><input type="number" placeholder="enter min amount" id="minamount" class="form-control"
+                name="Amount" placeholder="enter minamount" required>
+        </div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-4"></div>
+        <div class="col-sm-2"><label>Description:</label></div>
+        <div class="col-sm-3"><textarea id="description" style=" border-radius: 15px;" cols="33"
+                placeholder="Enter Description " required></textarea></div>
+        <div class="col-sm-3"></div>
+    </div><br>
+    <div class="row">
+        <div class="col-sm-5"></div>
+        <div class="col-sm-1"><button type="submit"  
+                class="btn btn-success">ADD</button></div>&nbsp;
+        <div class="col-sm-1"><button type="reset" id="cancel"
+                class="btn btn-success">Reset</button></div>
+        <div class="col-sm-5"></div>
+    </div><br></form>
+</body>
+<script>
+    let addpolices = [];
+
+    function performAjax(httpMethod, url, params) {
+        const myPromise = new Promise((resolve, reject) => {
+            var xhttp = new XMLHttpRequest();
+            xhttp.onreadystatechange = function () {
+                if (this.readyState == 4 && this.status == 200) {
+
+                    resolve(this.responseText);
+                }
+                if (this.status == 500) {
+                    reject({ error: true, message: "ServerError" });
+                }
+                if (this.status == 404) {
+                    reject({ error: true, message: "Resource not found" });
+                }
+            };
+            xhttp.open(httpMethod, url, true);
+            xhttp.setRequestHeader("Content-Type", "application/json");
+            params ? xhttp.send(params) : xhttp.send();
+        });
+        return myPromise;
+    }
+
+    function addpolicy() {
+        event.preventDefault();
+        const id = document.getElementById("id").value;
+        const policyname = document.getElementById("policyname").value;
+        const minage = document.getElementById("minage").value;
+        const minamount = document.getElementById("minamount").value;
+        const description = document.getElementById("description").value;
+       
+            const addPolicyPromise = performAjax(
+                "POST", "http://localhost:5000/admin/polices",
+                JSON.stringify({ policyname, minage, minamount, description })
+            );
+            addPolicyPromise
+                .then(newPolicyList => {
+                    alert("succefully added");
+                    cancel();
+                })
+                .catch(err => {
+                    alert(err.message);
+                })
+
+        }
+    
+
+    function cancel() {
+        document.getElementById("policyname").value = "";
+        document.getElementById("minage").value = "";
+        document.getElementById("minamount").value = "";
+        document.getElementById("description").value = "";
+    }
+</script>

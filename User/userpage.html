@@ -1,0 +1,87 @@
+<html>
+<title>LIC MANAGEMENT</title>
+
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/css/bootstrap.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.4.0/js/bootstrap.min.js"></script>
+</head>
+<style>
+  .footer {
+    position: fixed;
+    left: 0;
+    bottom: 0;
+    width: 100%;
+    background-color: #3498DB;
+    color: white;
+    text-align: center;
+    border-radius: 10px;
+  }
+
+  a span:hover {
+    color: #194502;
+  }
+
+  .form-control {
+    border-radius: 15px;
+  }
+</style>
+
+<body style="font-family:verdena;">
+  <div style="background-color: #3498DB  ; height:15%; text-align: center; margin-top: -20px;">
+    <h1 style="color:white; font-weight: bold; position: relative; top: 50%; transform: translateY(-50%)">
+      <strong>LIC MANAGEMNET SYSTEM</strong></h1>
+  </div>
+  <nav class="navbar navbar-inverse " style="background-color:#73C6B6;">
+    <div class="navbar-header">
+      <button type="button" class="navbar-toggle" style="color:white;background-color:rgb(168, 122, 122)"
+        data-toggle="collapse" data-target="#myNavbar">
+        <span class="icon-bar" style="color:white;"></span>
+        <span class="icon-bar"></span>
+        <span class="icon-bar"></span>
+      </button>
+      <a class="navbar-brand" href="#"></a>
+    </div>
+    <div class="collapse navbar-collapse nav-justified " id="myNavbar">
+      <ul class="nav navbar-nav" style="font-size: 20px;">
+        <li><a class="nav-link" href="http://localhost:3000/agent/addingcustomer" target="iframe"
+            style="color:white"><span>Add
+              Customer</span></a></li>
+        <li><a class="nav-link " href="http://localhost:3000/agent/customerprofile" target="iframe"
+            style="color:white"><span>View
+              Profile</span></a></li>
+        <li><a class="nav-link " href="http://localhost:3000/agent/viewcustomers" target="iframe"
+            style="color:white"><span>View
+              Customers</span></a></li>
+        <li><a class="nav-link " href="http://localhost:3000/agent/viewpolicys" target="iframe"
+            style="color:white"><span>View
+              Policys</span></a></li>
+        <li><a class="nav-link " href="http://localhost:3000/agent/payment" target="iframe"
+            style="color:white"><span>Payment</span></a></li>
+        <li><a class="nav-link " href="http://localhost:3000/agent/paymendetails" target="iframe"
+            style="color:white"><span>Payment
+              Details</span></a></li>
+              <li><a class="nav-link " href="http://localhost:3000/agent/ChangePassword" target="iframe"
+                style="color:white"><span>ChangeMobileNo</span></a></li>
+        <li><a class="nav-link " href="#userlogout" target="" onclick="userlogout()"
+            style="color:white"><span>Logout</span></a></li>
+      </ul>
+    </div>
+  </nav>
+  <iframe src="" name="iframe" id="iframe" style="width: 100%; height: 100%; border: none; margin-left: 5px;"></iframe>
+  <br>
+  <div id="userlogout">
+    <script>
+      function userlogout() {
+        window.location.href = "/home";
+      }
+    </script>
+    <div>
+      <div class="footer">
+        <h4>LIC MANAGEMNET SYSTEM || Copy Rights &COPY 2019</h4>
+      </div>
+</body>
+
+</html>
